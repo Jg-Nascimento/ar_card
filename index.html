@@ -101,16 +101,20 @@
         </a-assets>
 
         <!-- Marcador de imagem -->
-        <a-nft
-            type="nft"
-            url="assets/marker"
-            smooth="true"
-            smoothCount="10"
-            smoothTolerance=".01"
-            smoothThreshold="5"
-            raycaster="objects: .clickable"
-            emitevents="true"
-            cursor="fuse: false; rayOrigin: mouse;">
+        <!-- Substitua o bloco a-nft por este: -->
+            <a-marker
+                preset="custom"
+                type="pattern"
+                url="assets/marker.patt"
+                raycaster="objects: .clickable"
+                emitevents="true"
+                cursor="fuse: false; rayOrigin: mouse;">
+                
+                <!-- Conteúdo dentro do marcador permanece o mesmo -->
+                <!-- Vídeo e botões sociais -->
+                
+            </a-marker>
+
             
             <!-- Vídeo de apresentação -->
             <a-video
