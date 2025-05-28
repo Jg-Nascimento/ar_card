@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cartão AR - JN (Versão Simplificada)</title>
+    <title>Cartão AR - JN (Versão Ajustada)</title>
     <!-- Importando bibliotecas AR.js e A-Frame com versões específicas e estáveis -->
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
@@ -64,9 +64,37 @@
 
         <!-- Marcador padrão Hiro - Altamente reconhecível -->
         <a-marker preset="hiro">
-            <!-- Conteúdo básico para teste -->
-            <a-box position="0 0.5 0" material="color: red;"></a-box>
-            <a-text value="JN Tecnologia" position="0 1.25 0" align="center" color="#FFF" scale="1.5 1.5 1.5"></a-text>
+            <!-- Conteúdo com escala ajustada -->
+            <a-entity position="0 0 0" scale="0.5 0.5 0.5">
+                <!-- Título -->
+                <a-text value="JN Tecnologia" position="0 0.5 0" align="center" color="#FFF" scale="0.5 0.5 0.5"></a-text>
+                
+                <!-- Ícones de redes sociais (esquerda) -->
+                <a-entity position="-0.5 0 0">
+                    <!-- WhatsApp -->
+                    <a-cylinder position="0 0.2 0" radius="0.1" height="0.02" color="#25D366"></a-cylinder>
+                    <a-text value="WhatsApp" position="0 0.3 0" align="center" color="#FFF" scale="0.25 0.25 0.25"></a-text>
+                    
+                    <!-- Instagram -->
+                    <a-cylinder position="0 0 0" radius="0.1" height="0.02" color="#E1306C"></a-cylinder>
+                    <a-text value="Instagram" position="0 0.1 0" align="center" color="#FFF" scale="0.25 0.25 0.25"></a-text>
+                    
+                    <!-- LinkedIn -->
+                    <a-cylinder position="0 -0.2 0" radius="0.1" height="0.02" color="#0077B5"></a-cylinder>
+                    <a-text value="LinkedIn" position="0 -0.1 0" align="center" color="#FFF" scale="0.25 0.25 0.25"></a-text>
+                </a-entity>
+                
+                <!-- Vídeo e imagens (direita) -->
+                <a-entity position="0.5 0 0">
+                    <!-- Placeholder para vídeo -->
+                    <a-plane position="0 0.2 0" width="0.5" height="0.3" color="#333"></a-plane>
+                    <a-text value="Vídeo" position="0 0.4 0" align="center" color="#FFF" scale="0.25 0.25 0.25"></a-text>
+                    
+                    <!-- Placeholder para imagem -->
+                    <a-plane position="0 -0.2 0" width="0.4" height="0.4" color="#555"></a-plane>
+                    <a-text value="Imagem" position="0 -0.45 0" align="center" color="#FFF" scale="0.25 0.25 0.25"></a-text>
+                </a-entity>
+            </a-entity>
         </a-marker>
         
         <!-- Câmera simples -->
