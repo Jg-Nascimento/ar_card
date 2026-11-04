@@ -1,259 +1,149 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cartão AR - JN</title>
-    <!-- Importando bibliotecas AR.js e A-Frame -->
-    <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
-    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
-    <script src="https://raw.githack.com/donmccurdy/aframe-extras/master/dist/aframe-extras.loaders.min.js"></script>
-    <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-            font-family: Arial, sans-serif;
-        }
-        .loading-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            z-index: 999;
-        }
-        .instructions {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-size: 14px;
-            text-align: center;
-            z-index: 10;
-            transition: opacity 0.5s ease;
-        }
-        .social-button {
-            cursor: pointer;
-        }
-        .ar-info {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-size: 14px;
-            text-align: center;
-            z-index: 10;
-            display: none;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Cartão WebAR - Vídeo Promocional</title>
+
+  <!-- A-Frame e MindAR -->
+  <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body { overflow: hidden; font-family: sans-serif; background-color: #000; }
+
+    /* Tela de Carregamento Inicial */
+    #loading-screen {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: #0f172a; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; z-index: 9999; color: #fff;
+      transition: opacity 0.4s ease;
+    }
+    #loading-screen.hidden { opacity: 0; pointer-events: none; }
+    .spinner {
+      width: 40px; height: 40px; border: 3px solid rgba(255,255,255,0.2);
+      border-top-color: #3b82f6; border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 12px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Barra de Ações Rápidas (Overlay inferior) */
+    #action-overlay {
+      position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+      display: flex; gap: 10px; z-index: 1000; width: 90%; max-width: 400px;
+    }
+    .action-btn {
+      flex: 1; padding: 10px 6px; background: rgba(15, 23, 42, 0.9);
+      backdrop-filter: blur(6px); border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 10px; color: #fff; font-size: 11px; font-weight: bold;
+      text-decoration: none; text-align: center; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+  </style>
 </head>
 <body>
-    <!-- Tela de carregamento -->
-    <div class="loading-screen" id="loadingScreen">
-        <h2>Cartão AR - JN</h2>
-        <p>Carregando experiência de realidade aumentada...</p>
-        <p>Por favor, permita o acesso à câmera quando solicitado.</p>
-    </div>
 
-    <!-- Instruções para o usuário -->
-    <div class="instructions" id="instructions">
-        Aponte a câmera para o cartão JN para ver a experiência AR
-    </div>
+  <!-- Tela de Carregamento -->
+  <div id="loading-screen">
+    <div class="spinner"></div>
+    <p>Carregando Experiência AR...</p>
+  </div>
 
-    <!-- Informações de contato -->
-    <div class="ar-info" id="arInfo">
-        JN Tecnologia<br>
-        contato@jntecnologia.com.br
-    </div>
+  <!-- Cena AR acionada pelo alvo impresso (targets.mind) -->
+  <a-scene 
+    mindar-image="imageTargetSrc: ./targets.mind; filterMinCF: 0.0001; filterBeta: 0.001;" 
+    color-space="sRGB" 
+    renderer="colorManagement: true, physicallyCorrectLights" 
+    vr-mode-ui="enabled: false" 
+    device-orientation-permission-ui="enabled: false">
+    
+    <a-assets>
+      <!-- Arquivo de vídeo promocional (coloque o link ou o caminho local do seu .mp4) -->
+      <video id="promo-video" src="./assets/video-promocional.mp4" preload="auto" loop crossorigin="anonymous" webkit-playsinline playsinline></video>
+    </a-assets>
 
-    <!-- Cena A-Frame com AR.js -->
-    <a-scene
-        embedded
-        arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3;"
-        renderer="logarithmicDepthBuffer: true; precision: medium;"
-        vr-mode-ui="enabled: false"
-        gesture-detector
-        loading-screen="enabled: false">
+    <a-camera position="0 0 0" look-controls="enabled: false" cursor="fuse: false; rayOrigin: mouse;" raycaster="objects: .clickable"></a-camera>
 
-        <!-- Definição do marcador de imagem -->
-        <a-assets>
-            <img id="card-marker" src="assets/marker.png">
-            <!-- Ícones de redes sociais -->
-            <img id="whatsapp-icon" src="assets/icons/whatsapp.svg">
-            <img id="instagram-icon" src="assets/icons/instagram.svg">
-            <img id="linkedin-icon" src="assets/icons/linkedin.svg">
-            <!-- Vídeo de apresentação (placeholder) -->
-            <video id="presentation-video" src="assets/video.mp4" preload="auto" loop="true" crossorigin="anonymous" playsinline webkit-playsinline></video>
-        </a-assets>
+    <!-- Entidade vinculada ao marcador físico escaneado pela câmera -->
+    <a-entity id="card-target" mindar-image-target="targetIndex: 0">
+      
+      <!-- Plano tridimensional que exibe o vídeo projetado em cima do cartão -->
+      <!-- Ajuste a largura (width) e altura (height) conforme a proporção do seu vídeo (ex: 16:9) -->
+      <a-video src="#promo-video" position="0 0.05 0" width="1" height="0.56" class="clickable"></a-video>
 
-        <!-- Marcador padrão -->
-        <a-marker
-            preset="hiro"
-            raycaster="objects: .clickable"
-            emitevents="true"
-            cursor="fuse: false; rayOrigin: mouse;">
-            
-            <!-- Vídeo de apresentação -->
-            <a-video
-                id="ar-video"
-                src="#presentation-video"
-                position="0 0 0"
-                rotation="-90 0 0"
-                width="2"
-                height="1.2"
-                class="clickable"
-                play-on-click>
-            </a-video>
-            
-            <!-- Botões de redes sociais -->
-            <!-- WhatsApp -->
-            <a-image 
-                id="whatsapp-button"
-                src="#whatsapp-icon"
-                position="-1 0 0"
-                rotation="-90 0 0"
-                width="0.5"
-                height="0.5"
-                class="clickable social-button"
-                animation="property: scale; to: 1.2 1.2 1.2; dur: 300; startEvents: mouseenter"
-                animation__leave="property: scale; to: 1 1 1; dur: 300; startEvents: mouseleave"
-                event-set__click="_event: click; _target: #whatsapp-button; url: https://wa.me/5599999999999">
-            </a-image>
-            
-            <!-- Instagram -->
-            <a-image 
-                id="instagram-button"
-                src="#instagram-icon"
-                position="0 0 1"
-                rotation="-90 0 0"
-                width="0.5"
-                height="0.5"
-                class="clickable social-button"
-                animation="property: scale; to: 1.2 1.2 1.2; dur: 300; startEvents: mouseenter"
-                animation__leave="property: scale; to: 1 1 1; dur: 300; startEvents: mouseleave"
-                event-set__click="_event: click; _target: #instagram-button; url: https://instagram.com/seuperfil">
-            </a-image>
-            
-            <!-- LinkedIn -->
-            <a-image 
-                id="linkedin-button"
-                src="#linkedin-icon"
-                position="1 0 0"
-                rotation="-90 0 0"
-                width="0.5"
-                height="0.5"
-                class="clickable social-button"
-                animation="property: scale; to: 1.2 1.2 1.2; dur: 300; startEvents: mouseenter"
-                animation__leave="property: scale; to: 1 1 1; dur: 300; startEvents: mouseleave"
-                event-set__click="_event: click; _target: #linkedin-button; url: https://linkedin.com/in/seuperfil">
-            </a-image>
-            
-            <!-- Texto de informações -->
-            <a-text
-                value="JN Tecnologia"
-                position="0 0 -1"
-                rotation="-90 0 0"
-                color="#FFFFFF"
-                align="center"
-                width="4">
-            </a-text>
-        </a-marker>
-        
-        <!-- Câmera com cursor para interação -->
-        <a-entity camera>
-            <a-entity
-                cursor="fuse: false; rayOrigin: mouse;"
-                raycaster="objects: .clickable"
-                position="0 0 -1"
-                geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
-                material="color: white; shader: flat">
-            </a-entity>
-        </a-entity>
-    </a-scene>
+      <!-- Botão interativo 3D logo abaixo do vídeo para salvar contato -->
+      <a-plane id="save-contact" class="clickable" position="0 -0.32 0.02" height="0.1" width="0.6" color="#2563eb">
+        <a-text value="Salvar Contato (.vcf)" align="center" position="0 0 0.01" color="#FFF" width="1.2"></a-text>
+      </a-plane>
 
-    <script>
-        // Componente para lidar com cliques nos botões sociais
-        AFRAME.registerComponent('event-set__click', {
-            schema: {
-                _event: {default: ''},
-                _target: {default: ''},
-                url: {default: ''}
-            },
-            
-            init: function () {
-                var data = this.data;
-                var el = this.el;
-                
-                el.addEventListener(data._event, function () {
-                    // Abrir URL quando o botão for clicado
-                    window.open(data.url, '_blank');
-                });
-            }
+    </a-entity>
+  </a-scene>
+
+  <!-- Botões Flutuantes de Acesso Rápido -->
+  <div id="action-overlay">
+    <a id="link-whatsapp" class="action-btn" target="_blank">WhatsApp</a>
+    <a id="link-instagram" class="action-btn" target="_blank" style="background: #e1306c;">Instagram</a>
+    <a id="link-site" class="action-btn" target="_blank" style="background: #2563eb;">Website</a>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const sceneEl = document.querySelector('a-scene');
+      const loadingScreen = document.getElementById('loading-screen');
+      const cardTarget = document.getElementById('card-target');
+      const promoVideo = document.getElementById('promo-video');
+      const saveContactBtn = document.getElementById('save-contact');
+
+      // Links de configuração rápida
+      const dadosContato = {
+        whatsapp: "5583999999999",
+        instagram: "seu_perfil",
+        site: "https://seusite.com.br",
+        email: "contato@seusite.com.br",
+        nome: "João Desenvolvedor"
+      };
+
+      document.getElementById('link-whatsapp').href = `https://wa.me/${dadosContato.whatsapp}`;
+      document.getElementById('link-instagram').href = `https://instagram.com/${dadosContato.instagram}`;
+      document.getElementById('link-site').href = dadosContato.site;
+
+      // Oculta a tela de carregamento quando o WebAR estiver pronto
+      sceneEl.addEventListener("arReady", () => {
+        loadingScreen.classList.add('hidden');
+      });
+
+      // Quando o cartão físico for enquadrado pela câmera do celular:
+      cardTarget.addEventListener("targetFound", () => {
+        if ("vibrate" in navigator) navigator.vibrate(40);
+        promoVideo.play().catch(error => {
+          console.log("Reprodução automática bloqueada pelo navegador, aguardando toque:", error);
         });
-        
-        // Script para gerenciar a experiência AR
-        window.addEventListener('load', function() {
-            // Ocultar tela de carregamento quando a cena estiver pronta
-            const scene = document.querySelector('a-scene');
-            const loadingScreen = document.getElementById('loadingScreen');
-            const arInfo = document.getElementById('arInfo');
-            
-            scene.addEventListener('loaded', function() {
-                setTimeout(function() {
-                    loadingScreen.style.display = 'none';
-                }, 1000);
-            });
-            
-            // Detectar quando o marcador é encontrado
-            const marker = document.querySelector('a-marker');
-            const instructions = document.getElementById('instructions');
-            
-            marker.addEventListener('markerFound', function() {
-                instructions.textContent = 'Marcador detectado! Toque nos ícones para interagir.';
-                arInfo.style.display = 'block';
-                
-                setTimeout(function() {
-                    instructions.style.opacity = '0';
-                }, 3000);
-                
-                // Iniciar vídeo quando o marcador for encontrado
-                const video = document.querySelector('#presentation-video');
-                if (video) {
-                    video.play().catch(function(error) {
-                        console.log('Erro ao reproduzir vídeo:', error);
-                    });
-                }
-            });
-            
-            marker.addEventListener('markerLost', function() {
-                instructions.style.opacity = '1';
-                instructions.textContent = 'Aponte a câmera para o cartão JN para ver a experiência AR';
-                arInfo.style.display = 'none';
-            });
-            
-            // Adicionar eventos de toque para dispositivos móveis
-            document.querySelectorAll('.social-button').forEach(function(button) {
-                button.addEventListener('touchstart', function(e) {
-                    e.preventDefault();
-                    const url = this.getAttribute('event-set__click').split('url: ')[1];
-                    window.open(url, '_blank');
-                });
-            });
-        });
-    </script>
+      });
+
+      // Quando o usuário tirar o cartão de foco da câmera:
+      cardTarget.addEventListener("targetLost", () => {
+        promoVideo.pause();
+      });
+
+      // Toque alternativo caso o autoplay precise de gesto direto na tela
+      document.body.addEventListener("click", () => {
+        if (promoVideo.paused) {
+          promoVideo.play();
+        }
+      }, { once: true });
+
+      // Ação para gerar e baixar o contato vCard
+      saveContactBtn.addEventListener('click', () => {
+        const vcard = `BEGIN:VCARD\nVERSION:3.0\nFN:${dadosContato.nome}\nTEL;TYPE=CELL:${dadosContato.whatsapp}\nEMAIL:${dadosContato.email}\nURL:${dadosContato.site}\nEND:VCARD`;
+        const blob = new Blob([vcard], { type: "text/vcard" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'contato.vcf';
+        a.click();
+        URL.revokeObjectURL(url);
+      });
+    });
+  </script>
 </body>
 </html>
