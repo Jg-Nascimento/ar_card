@@ -115,18 +115,34 @@
         if ("vibrate" in navigator) navigator.vibrate(40);
       });
 
-      // Ação para gerar e baixar o contato vCard
-      saveContactBtn.addEventListener('click', () => {
-        const vcard = `BEGIN:VCARD\nVERSION:3.0\nFN:${dadosContato.nome}\nTEL;TYPE=CELL:${dadosContato.whatsapp}\nEMAIL:${dadosContato.email}\nURL:${dadosContato.site}\nEND:VCARD`;
-        const blob = new Blob([vcard], { type: "text/vcard" });
-        const url = URL.createObjectURL(blob);
+      // Ação robusta para gerar e baixar o contato vCard no mobile
+      saveContactBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const vcardData = [
+          "BEGIN:VCARD",
+          "VERSION:3.0",
+          `FN:${dadosContato.nome}`,
+          `TEL;TYPE=CELL:${dadosContato.whatsapp}`,
+          `EMAIL:${dadosContato.email}`,
+          `URL:${dadosContato.site}`,
+          "END:VCARD"
+        ].join("\n");
+
+        const blob = new Blob([vcardData], { type: 'text/vcard;charset=utf-8' });
+        const blobUrl = URL.createObjectURL(blob);
+        
         const a = document.createElement('a');
-        a.href = url;
+        a.href = blobUrl;
         a.download = 'contato.vcf';
+        document.body.appendChild(a);
         a.click();
-        URL.revokeObjectURL(url);
+        
+        // Limpeza após o clique
+        setTimeout(() => {
+          document.body.removeChild(a);
+          URL.revokeObjectURL(blobUrl);
+        }, 100);
       });
-    });
   </script>
 </body>
 </html>
