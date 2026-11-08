@@ -115,9 +115,8 @@
         if ("vibrate" in navigator) navigator.vibrate(40);
       });
 
-      // Ação robusta para gerar e baixar o contato vCard no mobile
-      saveContactBtn.addEventListener('click', (e) => {
-        e.preventDefault();
+     // Ação robusta para salvar o contato via link direto (compatível com Mobile AR)
+      saveContactBtn.addEventListener('click', () => {
         const vcardData = [
           "BEGIN:VCARD",
           "VERSION:3.0",
@@ -127,6 +126,15 @@
           `URL:${dadosContato.site}`,
           "END:VCARD"
         ].join("\n");
+
+        const encodedUri = encodeURI("data:text/vcard;charset=utf-8," + vcardData);
+        const link = document.createElement('a');
+        link.setAttribute('href', encodedUri);
+        link.setAttribute('download', 'contato_jn.vcf');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      });
 
         const blob = new Blob([vcardData], { type: 'text/vcard;charset=utf-8' });
         const blobUrl = URL.createObjectURL(blob);
