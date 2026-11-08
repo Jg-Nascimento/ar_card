@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Cartão WebAR - Botões 3D</title>
+  <title>Cartão WebAR - JN Soluções</title>
 
   <!-- A-Frame e MindAR -->
   <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
@@ -13,6 +13,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     body { overflow: hidden; font-family: sans-serif; background-color: #000; }
 
+    /* Tela de Carregamento Inicial */
     #loading-screen {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: #0f172a; display: flex; flex-direction: column;
@@ -25,15 +26,36 @@
       border-top-color: #3b82f6; border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 12px;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Barra de Ações Rápidas (Overlay inferior com ícones) */
+    #action-overlay {
+      position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+      display: flex; gap: 8px; z-index: 1000; width: 95%; max-width: 440px;
+    }
+    .action-btn {
+      flex: 1; padding: 10px 4px; background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 12px; color: #fff; font-size: 10px; font-weight: bold;
+      text-decoration: none; text-align: center; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      transition: transform 0.2s ease;
+    }
+    .action-btn:active { transform: scale(0.95); }
+    .action-icon {
+      font-size: 18px;
+      margin-bottom: 4px;
+    }
   </style>
 </head>
 <body>
 
+  <!-- Tela de Carregamento -->
   <div id="loading-screen">
     <div class="spinner"></div>
     <p>Carregando Experiência AR...</p>
   </div>
 
+  <!-- Cena AR acionada pelo alvo impresso (targets.mind) -->
   <a-scene 
     mindar-image="imageTargetSrc: ./targets.mind; filterMinCF: 0.0001; filterBeta: 0.001;" 
     color-space="sRGB" 
@@ -42,46 +64,42 @@
     device-orientation-permission-ui="enabled: false">
 
     <a-assets>
+      <!-- Imagem original carregada da pasta assets -->
       <img id="cartao-arte" src="./assets/1.png" crossorigin="anonymous">
     </a-assets>
 
     <a-camera position="0 0 0" look-controls="enabled: false" cursor="fuse: false; rayOrigin: mouse;" raycaster="objects: .clickable"></a-camera>
 
-    <!-- Ânfora AR presa ao Cartão Físico -->
+    <!-- Entidade vinculada ao marcador físico escaneado pela câmera -->
     <a-entity id="card-target" mindar-image-target="targetIndex: 0">
-      
-      <!-- Imagem do Cartão no Centro -->
+      <!-- Exibe a imagem 1.png perfeitamente projetada sobre o cartão físico -->
       <a-image src="#cartao-arte" position="0 0 0" width="1" height="0.56"></a-image>
-
-      <!-- BOTÕES INJETADOS DIRETAMENTE ABAIXO DO CARTÃO (3D) -->
-      
-      <!-- Salvar Contato -->
-      <a-plane id="btn-vcard" class="clickable" position="-0.4 -0.38 0.02" height="0.1" width="0.18" color="#2563eb">
-        <a-text value="Salvar" align="center" position="0 0 0.01" color="#FFF" width="1.2"></a-text>
-      </a-plane>
-
-      <!-- WhatsApp -->
-      <a-plane id="btn-wa" class="clickable" position="-0.2 -0.38 0.02" height="0.1" width="0.18" color="#16a34a">
-        <a-text value="Whats" align="center" position="0 0 0.01" color="#FFF" width="1.2"></a-text>
-      </a-plane>
-
-      <!-- Agenda -->
-      <a-plane id="btn-cal" class="clickable" position="0 -0.38 0.02" height="0.1" width="0.18" color="#7c3aed">
-        <a-text value="Agenda" align="center" position="0 0 0.01" color="#FFF" width="1.2"></a-text>
-      </a-plane>
-
-      <!-- Instagram -->
-      <a-plane id="btn-insta" class="clickable" position="0.2 -0.38 0.02" height="0.1" width="0.18" color="#e1306c">
-        <a-text value="Insta" align="center" position="0 0 0.01" color="#FFF" width="1.2"></a-text>
-      </a-plane>
-
-      <!-- Site -->
-      <a-plane id="btn-site" class="clickable" position="0.4 -0.38 0.02" height="0.1" width="0.18" color="#0284c7">
-        <a-text value="Site" align="center" position="0 0 0.01" color="#FFF" width="1.2"></a-text>
-      </a-plane>
-
     </a-entity>
   </a-scene>
+
+  <!-- Botões Flutuantes com Ícones na Parte Inferior -->
+  <div id="action-overlay">
+    <a id="save-contact-btn" class="action-btn" style="background: #2563eb;">
+      <span class="action-icon">👤</span>
+      <span>Salvar</span>
+    </a>
+    <a id="link-whatsapp" class="action-btn" target="_blank" style="background: #16a34a;">
+      <span class="action-icon">💬</span>
+      <span>WhatsApp</span>
+    </a>
+    <a id="link-calendar" class="action-btn" target="_blank" style="background: #7c3aed;">
+      <span class="action-icon">📅</span>
+      <span>Agenda</span>
+    </a>
+    <a id="link-instagram" class="action-btn" target="_blank" style="background: #e1306c;">
+      <span class="action-icon">📸</span>
+      <span>Instagram</span>
+    </a>
+    <a id="link-site" class="action-btn" target="_blank" style="background: #0284c7;">
+      <span class="action-icon">🌐</span>
+      <span>Site</span>
+    </a>
+  </div>
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {
@@ -89,6 +107,7 @@
       const loadingScreen = document.getElementById('loading-screen');
       const cardTarget = document.getElementById('card-target');
 
+      // Dados de Configuração
       const dadosContato = {
         whatsapp: "5583991438527",
         instagram: "seu_perfil",
@@ -98,32 +117,25 @@
         nome: "Jorge Nascimento"
       };
 
+      // Atribuindo os links dinamicamente
+      document.getElementById('link-whatsapp').href = `https://wa.me/${dadosContato.whatsapp}`;
+      document.getElementById('link-instagram').href = `https://instagram.com/${dadosContato.instagram}`;
+      document.getElementById('link-site').href = dadosContato.site;
+      document.getElementById('link-calendar').href = dadosContato.calendar;
+
+      // Oculta a tela de carregamento quando o WebAR estiver pronto
       sceneEl.addEventListener("arReady", () => {
         loadingScreen.classList.add('hidden');
       });
 
+      // Feedback háptico (vibração) ao encontrar o cartão físico
       cardTarget.addEventListener("targetFound", () => {
         if ("vibrate" in navigator) navigator.vibrate(40);
       });
 
-      // Eventos de clique nos elementos 3D
-      document.getElementById('btn-wa').addEventListener('click', () => {
-        window.open(`https://wa.me/${dadosContato.whatsapp}`, '_blank');
-      });
-
-      document.getElementById('btn-insta').addEventListener('click', () => {
-        window.open(`https://instagram.com/${dadosContato.instagram}`, '_blank');
-      });
-
-      document.getElementById('btn-site').addEventListener('click', () => {
-        window.open(dadosContato.site, '_blank');
-      });
-
-      document.getElementById('btn-cal').addEventListener('click', () => {
-        window.open(dadosContato.calendar, '_blank');
-      });
-
-      document.getElementById('btn-vcard').addEventListener('click', () => {
+      // Ação para baixar o contato vCard
+      document.getElementById('save-contact-btn').addEventListener('click', (e) => {
+        e.preventDefault();
         const vcardData = [
           "BEGIN:VCARD",
           "VERSION:3.0",
@@ -136,11 +148,13 @@
 
         const blob = new Blob([vcardData], { type: 'text/vcard;charset=utf-8' });
         const blobUrl = URL.createObjectURL(blob);
+        
         const a = document.createElement('a');
         a.href = blobUrl;
         a.download = 'contato_jn.vcf';
         document.body.appendChild(a);
         a.click();
+        
         setTimeout(() => {
           document.body.removeChild(a);
           URL.revokeObjectURL(blobUrl);
