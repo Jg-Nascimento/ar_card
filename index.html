@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Cartão WebAR - Imagem Promocional</title>
+  <title>Cartão WebAR - JN Soluções</title>
 
   <!-- A-Frame e MindAR -->
   <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
@@ -27,17 +27,23 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* Barra de Ações Rápidas (Overlay inferior) */
+    /* Barra de Ações Rápidas (Overlay inferior com ícones) */
     #action-overlay {
       position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-      display: flex; gap: 10px; z-index: 1000; width: 90%; max-width: 400px;
+      display: flex; gap: 8px; z-index: 1000; width: 95%; max-width: 440px;
     }
     .action-btn {
-      flex: 1; padding: 10px 6px; background: rgba(15, 23, 42, 0.9);
-      backdrop-filter: blur(6px); border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 10px; color: #fff; font-size: 11px; font-weight: bold;
+      flex: 1; padding: 10px 4px; background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 12px; color: #fff; font-size: 10px; font-weight: bold;
       text-decoration: none; text-align: center; display: flex; flex-direction: column;
-      align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      transition: transform 0.2s ease;
+    }
+    .action-btn:active { transform: scale(0.95); }
+    .action-icon {
+      font-size: 18px;
+      margin-bottom: 4px;
     }
   </style>
 </head>
@@ -56,33 +62,35 @@
     renderer="colorManagement: true, physicallyCorrectLights" 
     vr-mode-ui="enabled: false" 
     device-orientation-permission-ui="enabled: false">
-    
-    <a-assets>
-      <!-- Imagem a ser exibida sobre o cartão em vez do vídeo -->
-      <img id="card-image" src="./assets/1.png" crossorigin="anonymous">
-    </a-assets>
 
     <a-camera position="0 0 0" look-controls="enabled: false" cursor="fuse: false; rayOrigin: mouse;" raycaster="objects: .clickable"></a-camera>
 
     <!-- Entidade vinculada ao marcador físico escaneado pela câmera -->
-    <a-entity id="card-target" mindar-image-target="targetIndex: 0">
-      
-      <!-- Plano tridimensional que exibe a imagem projetada em cima do cartão -->
-      <a-image src="#card-image" position="0 0.05 0" width="1" height="0.56" class="clickable"></a-image>
-
-      <!-- Botão interativo 3D logo abaixo da imagem para salvar contato -->
-      <a-plane id="save-contact" class="clickable" position="0 -0.38 0.02" height="0.1" width="0.6" color="#2563eb">
-        <a-text value="Salvar Contato (.vcf)" align="center" position="0 0 0.01" color="#FFF" width="1.2"></a-text>
-      </a-plane>
-
-    </a-entity>
+    <a-entity id="card-target" mindar-image-target="targetIndex: 0"></a-entity>
   </a-scene>
 
-  <!-- Botões Flutuantes de Acesso Rápido -->
+  <!-- Botões Flutuantes com Ícones na Parte Inferior -->
   <div id="action-overlay">
-    <a id="link-whatsapp" class="action-btn" target="_blank">WhatsApp</a>
-    <a id="link-instagram" class="action-btn" target="_blank" style="background: #e1306c;">Instagram</a>
-    <a id="link-site" class="action-btn" target="_blank" style="background: #2563eb;">Website</a>
+    <a id="save-contact-btn" class="action-btn" style="background: #2563eb;">
+      <span class="action-icon">👤</span>
+      <span>Salvar</span>
+    </a>
+    <a id="link-whatsapp" class="action-btn" target="_blank" style="background: #16a34a;">
+      <span class="action-icon">💬</span>
+      <span>WhatsApp</span>
+    </a>
+    <a id="link-calendar" class="action-btn" target="_blank" style="background: #7c3aed;">
+      <span class="action-icon">📅</span>
+      <span>Agenda</span>
+    </a>
+    <a id="link-instagram" class="action-btn" target="_blank" style="background: #e1306c;">
+      <span class="action-icon">📸</span>
+      <span>Instagram</span>
+    </a>
+    <a id="link-site" class="action-btn" target="_blank" style="background: #0284c7;">
+      <span class="action-icon">🌐</span>
+      <span>Site</span>
+    </a>
   </div>
 
   <script>
@@ -90,20 +98,22 @@
       const sceneEl = document.querySelector('a-scene');
       const loadingScreen = document.getElementById('loading-screen');
       const cardTarget = document.getElementById('card-target');
-      const saveContactBtn = document.getElementById('save-contact');
 
-      // Links de configuração rápida
+      // Dados de Configuração
       const dadosContato = {
         whatsapp: "5583991438527",
         instagram: "seu_perfil",
         site: "https://www.jnsolucoes.com",
+        calendar: "https://cal.com/ts-tech-technology-a1inp7/reuniao",
         email: "contato@insolucoes.com",
         nome: "Jorge Nascimento"
       };
 
+      // Atribuindo os links dinamicamente
       document.getElementById('link-whatsapp').href = `https://wa.me/${dadosContato.whatsapp}`;
       document.getElementById('link-instagram').href = `https://instagram.com/${dadosContato.instagram}`;
       document.getElementById('link-site').href = dadosContato.site;
+      document.getElementById('link-calendar').href = dadosContato.calendar;
 
       // Oculta a tela de carregamento quando o WebAR estiver pronto
       sceneEl.addEventListener("arReady", () => {
@@ -115,8 +125,9 @@
         if ("vibrate" in navigator) navigator.vibrate(40);
       });
 
-     // Ação robusta para salvar o contato via link direto (compatível com Mobile AR)
-      saveContactBtn.addEventListener('click', () => {
+      // Ação para baixar o contato vCard
+      document.getElementById('save-contact-btn').addEventListener('click', (e) => {
+        e.preventDefault();
         const vcardData = [
           "BEGIN:VCARD",
           "VERSION:3.0",
@@ -127,30 +138,21 @@
           "END:VCARD"
         ].join("\n");
 
-        const encodedUri = encodeURI("data:text/vcard;charset=utf-8," + vcardData);
-        const link = document.createElement('a');
-        link.setAttribute('href', encodedUri);
-        link.setAttribute('download', 'contato_jn.vcf');
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      });
-
         const blob = new Blob([vcardData], { type: 'text/vcard;charset=utf-8' });
         const blobUrl = URL.createObjectURL(blob);
         
         const a = document.createElement('a');
         a.href = blobUrl;
-        a.download = 'contato.vcf';
+        a.download = 'contato_jn.vcf';
         document.body.appendChild(a);
         a.click();
         
-        // Limpeza após o clique
         setTimeout(() => {
           document.body.removeChild(a);
           URL.revokeObjectURL(blobUrl);
         }, 100);
       });
+    });
   </script>
 </body>
 </html>
