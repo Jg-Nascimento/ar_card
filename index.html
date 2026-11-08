@@ -17,33 +17,39 @@
     #loading-screen {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: #0f172a; display: flex; flex-direction: column;
-      align-items: center; justify-content: center; z-index: 9999; color: #fff;
+      align-items: center; justify-content: center; z-index: 9999; color: #d4af37;
       transition: opacity 0.4s ease;
     }
     #loading-screen.hidden { opacity: 0; pointer-events: none; }
     .spinner {
-      width: 40px; height: 40px; border: 3px solid rgba(255,255,255,0.2);
-      border-top-color: #3b82f6; border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 12px;
+      width: 40px; height: 40px; border: 3px solid rgba(212, 175, 55, 0.2);
+      border-top-color: #d4af37; border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 12px;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* Barra de Ações Rápidas (Overlay inferior com ícones) */
+    /* Barra de Ações Rápidas (Overlay inferior com tema dourado) */
     #action-overlay {
       position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
       display: flex; gap: 8px; z-index: 1000; width: 95%; max-width: 440px;
     }
     .action-btn {
-      flex: 1; padding: 10px 4px; background: rgba(15, 23, 42, 0.95);
-      backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 12px; color: #fff; font-size: 10px; font-weight: bold;
+      flex: 1; padding: 10px 4px;
+      background: linear-gradient(135deg, #bf953f 0%, #fcf6ba 25%, #b38728 50%, #fbf5b7 75%, #aa771c 100%);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      border-radius: 12px; color: #1a1a1a; font-size: 10px; font-weight: bold;
       text-decoration: none; text-align: center; display: flex; flex-direction: column;
-      align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-      transition: transform 0.2s ease;
+      align-items: center; justify-content: center;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6), inset 0 0 4px rgba(255, 255, 255, 0.6);
+      transition: transform 0.2s ease, filter 0.2s ease;
     }
-    .action-btn:active { transform: scale(0.95); }
+    .action-btn:active { transform: scale(0.95); filter: brightness(0.9); }
     .action-icon {
       font-size: 18px;
-      margin-bottom: 4px;
+      margin-bottom: 3px;
+      filter: drop-shadow(0px 1px 1px rgba(0, 0, 0, 0.3));
+    }
+    .action-btn span {
+      text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.5);
     }
   </style>
 </head>
@@ -64,38 +70,36 @@
     device-orientation-permission-ui="enabled: false">
 
     <a-assets>
-      <!-- Imagem original carregada da pasta assets -->
       <img id="cartao-arte" src="./assets/1.png" crossorigin="anonymous">
     </a-assets>
 
-    <a-camera position="0 0 0" look-controls="enabled: false" cursor="fuse: false; rayOrigin: mouse;" raycaster="objects: .clickable"></a-camera>
+    <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
-    <!-- Entidade vinculada ao marcador físico escaneado pela câmera -->
+    <!-- Entidade vinculada ao cartão físico -->
     <a-entity id="card-target" mindar-image-target="targetIndex: 0">
-      <!-- Exibe a imagem 1.png perfeitamente projetada sobre o cartão físico -->
       <a-image src="#cartao-arte" position="0 0 0" width="1" height="0.56"></a-image>
     </a-entity>
   </a-scene>
 
-  <!-- Botões Flutuantes com Ícones na Parte Inferior -->
+  <!-- Botões Flutuantes Dourados na Parte Inferior -->
   <div id="action-overlay">
-    <a id="save-contact-btn" class="action-btn" style="background: #2563eb;">
+    <a id="save-contact-btn" class="action-btn">
       <span class="action-icon">👤</span>
       <span>Salvar</span>
     </a>
-    <a id="link-whatsapp" class="action-btn" target="_blank" style="background: #16a34a;">
+    <a id="link-whatsapp" class="action-btn" target="_blank">
       <span class="action-icon">💬</span>
       <span>WhatsApp</span>
     </a>
-    <a id="link-calendar" class="action-btn" target="_blank" style="background: #7c3aed;">
+    <a id="link-calendar" class="action-btn" target="_blank">
       <span class="action-icon">📅</span>
       <span>Agenda</span>
     </a>
-    <a id="link-instagram" class="action-btn" target="_blank" style="background: #e1306c;">
+    <a id="link-instagram" class="action-btn" target="_blank">
       <span class="action-icon">📸</span>
       <span>Instagram</span>
     </a>
-    <a id="link-site" class="action-btn" target="_blank" style="background: #0284c7;">
+    <a id="link-site" class="action-btn" target="_blank">
       <span class="action-icon">🌐</span>
       <span>Site</span>
     </a>
@@ -107,7 +111,6 @@
       const loadingScreen = document.getElementById('loading-screen');
       const cardTarget = document.getElementById('card-target');
 
-      // Dados de Configuração
       const dadosContato = {
         whatsapp: "5583991438527",
         instagram: "seu_perfil",
@@ -117,23 +120,19 @@
         nome: "Jorge Nascimento"
       };
 
-      // Atribuindo os links dinamicamente
       document.getElementById('link-whatsapp').href = `https://wa.me/${dadosContato.whatsapp}`;
       document.getElementById('link-instagram').href = `https://instagram.com/${dadosContato.instagram}`;
       document.getElementById('link-site').href = dadosContato.site;
       document.getElementById('link-calendar').href = dadosContato.calendar;
 
-      // Oculta a tela de carregamento quando o WebAR estiver pronto
       sceneEl.addEventListener("arReady", () => {
         loadingScreen.classList.add('hidden');
       });
 
-      // Feedback háptico (vibração) ao encontrar o cartão físico
       cardTarget.addEventListener("targetFound", () => {
         if ("vibrate" in navigator) navigator.vibrate(40);
       });
 
-      // Ação para baixar o contato vCard
       document.getElementById('save-contact-btn').addEventListener('click', (e) => {
         e.preventDefault();
         const vcardData = [
