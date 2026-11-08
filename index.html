@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
- <!-- <title>Cartão WebAR - Vídeo Promocional</title>
+  <title>Cartão WebAR - Imagem Promocional</title>
 
-  <!-- A-Frame e MindAR 
+  <!-- A-Frame e MindAR -->
   <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
@@ -43,12 +43,12 @@
 </head>
 <body>
 
-  <!-- Tela de Carregamento 
+  <!-- Tela de Carregamento -->
   <div id="loading-screen">
     <div class="spinner"></div>
     <p>Carregando Experiência AR...</p>
   </div>
--->
+
   <!-- Cena AR acionada pelo alvo impresso (targets.mind) -->
   <a-scene 
     mindar-image="imageTargetSrc: ./targets.mind; filterMinCF: 0.0001; filterBeta: 0.001;" 
@@ -58,8 +58,8 @@
     device-orientation-permission-ui="enabled: false">
     
     <a-assets>
-      <!-- Arquivo de vídeo promocional (coloque o link ou o caminho local do seu .mp4) -->
-      <video id="promo-video" src="./assets/video-promocional.mp4" preload="auto" loop crossorigin="anonymous" webkit-playsinline playsinline></video>
+      <!-- Imagem a ser exibida sobre o cartão em vez do vídeo -->
+      <img id="card-image" src="./assets/Cartão de visita para negócios de tecnologia futurista neon azul.png" crossorigin="anonymous">
     </a-assets>
 
     <a-camera position="0 0 0" look-controls="enabled: false" cursor="fuse: false; rayOrigin: mouse;" raycaster="objects: .clickable"></a-camera>
@@ -67,12 +67,11 @@
     <!-- Entidade vinculada ao marcador físico escaneado pela câmera -->
     <a-entity id="card-target" mindar-image-target="targetIndex: 0">
       
-      <!-- Plano tridimensional que exibe o vídeo projetado em cima do cartão -->
-      <!-- Ajuste a largura (width) e altura (height) conforme a proporção do seu vídeo (ex: 16:9) -->
-      <a-video src="#promo-video" position="0 0.05 0" width="1" height="0.56" class="clickable"></a-video>
+      <!-- Plano tridimensional que exibe a imagem projetada em cima do cartão -->
+      <a-image src="#card-image" position="0 0.05 0" width="1" height="0.56" class="clickable"></a-image>
 
-      <!-- Botão interativo 3D logo abaixo do vídeo para salvar contato -->
-      <a-plane id="save-contact" class="clickable" position="0 -0.32 0.02" height="0.1" width="0.6" color="#2563eb">
+      <!-- Botão interativo 3D logo abaixo da imagem para salvar contato -->
+      <a-plane id="save-contact" class="clickable" position="0 -0.38 0.02" height="0.1" width="0.6" color="#2563eb">
         <a-text value="Salvar Contato (.vcf)" align="center" position="0 0 0.01" color="#FFF" width="1.2"></a-text>
       </a-plane>
 
@@ -91,16 +90,15 @@
       const sceneEl = document.querySelector('a-scene');
       const loadingScreen = document.getElementById('loading-screen');
       const cardTarget = document.getElementById('card-target');
-      const promoVideo = document.getElementById('promo-video');
       const saveContactBtn = document.getElementById('save-contact');
 
       // Links de configuração rápida
       const dadosContato = {
-        whatsapp: "5583999999999",
+        whatsapp: "5583991438527",
         instagram: "seu_perfil",
-        site: "https://seusite.com.br",
-        email: "contato@seusite.com.br",
-        nome: "João Desenvolvedor"
+        site: "https://www.jnsolucoes.com",
+        email: "contato@insolucoes.com",
+        nome: "Jorge Nascimento"
       };
 
       document.getElementById('link-whatsapp').href = `https://wa.me/${dadosContato.whatsapp}`;
@@ -112,25 +110,10 @@
         loadingScreen.classList.add('hidden');
       });
 
-      // Quando o cartão físico for enquadrado pela câmera do celular:
+      // Feedback háptico (vibração) ao encontrar o cartão físico
       cardTarget.addEventListener("targetFound", () => {
         if ("vibrate" in navigator) navigator.vibrate(40);
-        promoVideo.play().catch(error => {
-          console.log("Reprodução automática bloqueada pelo navegador, aguardando toque:", error);
-        });
       });
-
-      // Quando o usuário tirar o cartão de foco da câmera:
-      cardTarget.addEventListener("targetLost", () => {
-        promoVideo.pause();
-      });
-
-      // Toque alternativo caso o autoplay precise de gesto direto na tela
-      document.body.addEventListener("click", () => {
-        if (promoVideo.paused) {
-          promoVideo.play();
-        }
-      }, { once: true });
 
       // Ação para gerar e baixar o contato vCard
       saveContactBtn.addEventListener('click', () => {
